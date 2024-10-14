@@ -1,0 +1,64 @@
+{
+  "navbar": {
+    "aboutMe": "À propos de moi",
+    "projects": "Mes projets",
+    "journey": "Mon parcours",
+    "contact": "Contact"
+  },
+  "footer": {
+    "year": "©2024",
+    "person": "Romain GILOT",
+    "text": "Tous droits réservés."
+  },
+  "home": {
+    "welcome": "Bienvenue sur mon portfolio",
+    "title": "Développeur Full-Stack",
+    "message": "Retrouvez toutes les informations qui me concernent sur ce site internet ! 😄",
+    "textButton": "Retrouvez mon CV"
+  },
+  "aboutMe": {
+    "sectionTitle": "Qui suis-je ?",
+    "description": "Petit explorateur digital de 20 ans à la recherche de super pouvoirs numériques pour devenir un expert en clics et en codes. À la conquête du royaume des compétences informatiques, avec sérieux et détermination! 🚀",
+    "linkedinText": "Retrouvez moi sur Linkedin"
+  },
+  "contact": {
+    "title": "Me contacter",
+    "subTitle": "Vous souhaitez me contacter ?",
+    "email": {
+      "label": "Email",
+      "text": "contact@romain-gilot.fr",
+      "action": "Envoyer un email"
+    },
+    "website": {
+      "label": "Site web",
+      "text": "www.romain-gilot.fr",
+      "action": "Visiter le site"
+    },
+    "location": {
+      "label": "Lieu",
+      "text": "Metz, France",
+      "action": "Voir sur la carte"
+    }
+  },
+  "journey": {
+    "title": "Mon parcours",
+    "subTitle": "Quel est mon parcours ?",
+    "education": [
+      {
+        "label": "Baccalauréat Général",
+        "duration": "2018-2021",
+        "link": "#"
+      },
+      {
+        "label": "BTS SIO SLAM",
+        "duration": "2021-2023",
+        "link": "https://www.onisep.fr/ressources/univers-formation/formations/post-bac/bts-services-informatiques-aux-organisations-option-b-solutions-logicielles-et-applications-metiers"
+      },
+      {
+        "label": "Bachelor Développeur Full-Stack",
+        "duration": "2023-2024",
+        "link": "https://www.metz-numeric-school.fr/fr/formations/developpement-informatique/developpeur-full-stack-en-alternance"
+      }
+    ]
+  }
+}
