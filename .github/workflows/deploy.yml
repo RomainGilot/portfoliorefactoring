@@ -24,6 +24,17 @@ jobs:
       - name: Construire l'application
         run: npm run build
 
+      - name: Ajouter le fichier .htaccess
+        run: |
+          echo '<IfModule mod_rewrite.c>
+            RewriteEngine On
+            RewriteBase /
+            RewriteRule ^index\.html$ - [L]
+            RewriteCond %{REQUEST_FILENAME} !-f
+            RewriteCond %{REQUEST_FILENAME} !-d
+            RewriteRule . /index.html [L]
+          </IfModule>' > build/.htaccess
+
       - name: Déployer sur le VPS
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_KEY }}
