@@ -26,11 +26,14 @@ jobs:
 
       - name: Déployer sur le vps
         env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_KEY }}
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           VPS_USER: ${{ secrets.VPS_USER }}
-          VPS_HOST: ${{ secrets.VPS_IP }}
+          VPS_HOST: ${{ secrets.VPS_HOST }}
         run: |
           echo "$SSH_PRIVATE_KEY" > private_key
           chmod 600 private_key
+          # Copie des fichiers de construction et de package.json
           scp -o StrictHostKeyChecking=no -i private_key -r build/* $VPS_USER@$VPS_HOST:/var/www/portfolio/
+          scp -o StrictHostKeyChecking=no -i private_key package.json $VPS_USER@$VPS_HOST:/var/www/portfolio/
+          # Exécuter npm install si nécessaire
           ssh -o StrictHostKeyChecking=no -i private_key $VPS_USER@$VPS_HOST "cd /var/www/portfolio && npm install --production"
