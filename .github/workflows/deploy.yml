@@ -1,4 +1,4 @@
-name: Déployer l'application React
+name: Déployer l'application React et le serveur API
 
 on:
   push:
@@ -16,7 +16,7 @@ jobs:
       - name: Configurer Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: "16" # Remplacez par la version de Node.js utilisée dans votre projet
+          node-version: "16"
 
       - name: Installer les dépendances
         run: npm install
@@ -34,6 +34,9 @@ jobs:
           chmod 600 private_key
           # Copier les fichiers de construction et le package.json
           scp -o StrictHostKeyChecking=no -i private_key -r build/* $VPS_USER@$VPS_HOST:/var/www/portfolio/
+          scp -o StrictHostKeyChecking=no -i private_key -r src/server $VPS_USER@$VPS_HOST:/var/www/portfolio/
           scp -o StrictHostKeyChecking=no -i private_key package.json $VPS_USER@$VPS_HOST:/var/www/portfolio/
-          # Exécuter npm install dans le répertoire de déploiement
-          ssh -o StrictHostKeyChecking=no -i private_key $VPS_USER@$VPS_HOST "cd /var/www/portfolio && npm install --production"
+          # Exécuter npm install dans le répertoire de déploiement pour le serveur
+          ssh -o StrictHostKeyChecking=no -i private_key $VPS_USER@$VPS_HOST "cd /var/www/portfolio/server && npm install --production"
+          # Démarrer le serveur
+          ssh -o StrictHostKeyChecking=no -i private_key $VPS_USER@$VPS_HOST "cd /var/www/portfolio/server && node server.js &"

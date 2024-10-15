@@ -10,23 +10,13 @@ const resources = {
 
 const lng = localStorage.getItem("i18nextLng") || "fr";
 
-i18n
-  .use(initReactI18next)
-  .init({
-    resources,
-    lng,
-    fallbackLng: "fr",
-    interpolation: {
-      escapeValue: false,
-    },
-  })
-  .then(() => {
-    console.log("Langue actuelle :", i18n.language);
-    console.log("Traductions disponibles :", i18n.store.data);
-    console.log("Exemple de traduction (navbar.aboutMe) :", i18n.t("navbar.aboutMe"));
-  })
-  .catch((error) => {
-    console.error("Erreur lors de l'initialisation d'i18n :", error);
-  });
+i18n.use(initReactI18next).init({
+  resources,
+  lng,
+  fallbackLng: "fr",
+  interpolation: {
+    escapeValue: false,
+  },
+});
 
 export default i18n;

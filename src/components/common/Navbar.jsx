@@ -21,7 +21,6 @@ export default function Navbar() {
 
   const changeLanguage = (lng) => {
     i18n.changeLanguage(lng);
-    localStorage.setItem("i18nextLng", lng);
     setIsDropdownVisible(false);
   };
 
@@ -92,12 +91,18 @@ export default function Navbar() {
                 {i18n.language === "fr" ? "Français" : "English"}
               </button>
               {isDropdownVisible && (
-                <div className="absolute right-0 mt-2 w-32 md:w-40 bg-white border border-gray-200 rounded shadow-lg">
-                  <button onClick={() => changeLanguage("fr")} className="flex items-center w-full px-4 py-2 text-gray-700 hover:bg-gray-100 text-left">
+                <div className="absolute right-0 mt-2 w-32 md:w-40 bg-white border border-gray-200 rounded shadow-lg" onClick={(e) => e.stopPropagation()}>
+                  <button
+                    onClick={() => changeLanguage("fr")}
+                    className="flex cursor-pointer items-center w-full px-4 py-2 text-gray-700 hover:bg-gray-100 text-left"
+                  >
                     <img src={flagFR} alt="French flag" className="h-5 w-5 mr-2" />
                     Français
                   </button>
-                  <button onClick={() => changeLanguage("en")} className="flex items-center w-full px-4 py-2 text-gray-700 hover:bg-gray-100 text-left">
+                  <button
+                    onClick={() => changeLanguage("en")}
+                    className="flex cursor-pointer items-center w-full px-4 py-2 text-gray-700 hover:bg-gray-100 text-left"
+                  >
                     <img src={flagEN} alt="English flag" className="h-5 w-5 mr-2" />
                     English
                   </button>
