@@ -1,4 +1,4 @@
-name: Deploy to VPS
+name: Déploiement du Portfolio
 
 on:
   push:
@@ -6,57 +6,31 @@ on:
       - main
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Vérififier le code
         uses: actions/checkout@v2
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
-
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v2
+      - name: Installation de Node.js
+        uses: actions/setup-node@v2
         with:
-          context: .
-          push: true
-          tags: romaingl57/portfolio:latest
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
+          node-version: '16'  
 
-      - name: SSH to VPS and deploy
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.VPS_IP }}  # Utilisez le secret pour l'IP du VPS
-          username: ${{ secrets.VPS_USER }}  # Utilisez le secret pour le nom d'utilisateur du VPS
-          key: ${{ secrets.SSH_PRIVATE_KEY }}  # Utilisez le secret pour la clé SSH
-          port: 22
-          script: |
-            # Installez Docker et Docker Compose si ce n'est pas déjà fait
-            if ! command -v docker &> /dev/null; then
-              echo 'Docker n\'est pas installé. Installation...' 
-              sudo apt-get update
-              sudo apt-get install -y docker.io
-              sudo systemctl start docker
-              sudo systemctl enable docker
-            else
-              echo 'Docker est déjà installé.'
-            fi
+      - name: Installation des dépendances
+        run: npm install
 
-            if ! command -v docker-compose &> /dev/null; then
-              echo 'Docker Compose n\'est pas installé. Installation...' 
-              sudo apt-get install -y docker-compose
-            else
-              echo 'Docker Compose est déjà installé.'
-            fi
+      - name: Build l application
+        run: npm run build
 
-            # Naviguez vers le dossier de votre projet
-            cd /var/www/portfolio || exit 1  # Assurez-vous de sortir si le changement de répertoire échoue
-
-            # Téléchargez l'image la plus récente
-            docker-compose pull
-
-            # Redémarrez les conteneurs
-            docker-compose down
-            docker-compose up -d --build
+      - name: Déployer sur le vps
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_KEY }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+          VPS_HOST: ${{ secrets.VPS_IP }}
+        run: |
+          echo "$SSH_PRIVATE_KEY" > private_key
+          chmod 600 private_key
+          scp -o StrictHostKeyChecking=no -i private_key -r build/* $VPS_USER@$VPS_HOST:/var/www/portfolio/
+          ssh -o StrictHostKeyChecking=no -i private_key $VPS_USER@$VPS_HOST "cd /var/www/portfolio && npm install --production"
