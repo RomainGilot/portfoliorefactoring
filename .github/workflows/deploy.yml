@@ -24,17 +24,6 @@ jobs:
       - name: Construire l'application
         run: npm run build
 
-      - name: Ajouter le fichier .htaccess
-        run: |
-          echo "<IfModule mod_rewrite.c>" > build/.htaccess
-          echo "  RewriteEngine On" >> build/.htaccess
-          echo "  RewriteBase /" >> build/.htaccess
-          echo "  RewriteRule ^index\.html$ - [L]" >> build/.htaccess
-          echo "  RewriteCond %{REQUEST_FILENAME} !-f" >> build/.htaccess
-          echo "  RewriteCond %{REQUEST_FILENAME} !-d" >> build/.htaccess
-          echo "  RewriteRule . /index.html [L]" >> build/.htaccess
-          echo "</IfModule>" >> build/.htaccess
-
       - name: Déployer sur le VPS
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_KEY }}
@@ -43,11 +32,17 @@ jobs:
         run: |
           echo "$SSH_PRIVATE_KEY" > private_key
           chmod 600 private_key
-          # Copier les fichiers de construction et le package.json
+          # Copier les fichiers de construction et le répertoire src/server
           scp -o StrictHostKeyChecking=no -i private_key -r build/* $VPS_USER@$VPS_HOST:/var/www/portfolio/
           scp -o StrictHostKeyChecking=no -i private_key -r src/server $VPS_USER@$VPS_HOST:/var/www/portfolio/
           scp -o StrictHostKeyChecking=no -i private_key package.json $VPS_USER@$VPS_HOST:/var/www/portfolio/
           # Exécuter npm install dans le répertoire de déploiement pour le serveur
           ssh -o StrictHostKeyChecking=no -i private_key $VPS_USER@$VPS_HOST "cd /var/www/portfolio/server && npm install --production"
-          # Démarrer le serveur avec PM2
-          ssh -o StrictHostKeyChecking=no -i private_key $VPS_USER@$VPS_HOST "cd /var/www/portfolio && pm2 start server.js --name 'portfolio-api' --watch"
+
+      - name: Lister les fichiers pour déboguer
+        run: |
+          ssh -o StrictHostKeyChecking=no -i private_key $VPS_USER@$VPS_HOST "cd /var/www/portfolio/server && ls -l"
+
+      - name: Démarrer le serveur avec PM2
+        run: |
+          ssh -o StrictHostKeyChecking=no -i private_key $VPS_USER@$VPS_HOST "cd /var/www/portfolio/server && pm2 start server.js --name 'portfolio-api' --watch"
