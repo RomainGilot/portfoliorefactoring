@@ -1,4 +1,4 @@
-name: Déploiement du Portfolio
+name: Déployer l'application React
 
 on:
   push:
@@ -10,30 +10,30 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Vérififier le code
+      - name: Vérifier le code
         uses: actions/checkout@v2
 
-      - name: Installation de Node.js
+      - name: Configurer Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '16'  
+          node-version: "16" # Remplacez par la version de Node.js utilisée dans votre projet
 
-      - name: Installation des dépendances
+      - name: Installer les dépendances
         run: npm install
 
-      - name: Build l application
+      - name: Construire l'application
         run: npm run build
 
-      - name: Déployer sur le vps
+      - name: Déployer sur le VPS
         env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_KEY }}
           VPS_USER: ${{ secrets.VPS_USER }}
-          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_HOST: ${{ secrets.VPS_IP }}
         run: |
           echo "$SSH_PRIVATE_KEY" > private_key
           chmod 600 private_key
-          # Copie des fichiers de construction et de package.json
+          # Copier les fichiers de construction et le package.json
           scp -o StrictHostKeyChecking=no -i private_key -r build/* $VPS_USER@$VPS_HOST:/var/www/portfolio/
           scp -o StrictHostKeyChecking=no -i private_key package.json $VPS_USER@$VPS_HOST:/var/www/portfolio/
-          # Exécuter npm install si nécessaire
+          # Exécuter npm install dans le répertoire de déploiement
           ssh -o StrictHostKeyChecking=no -i private_key $VPS_USER@$VPS_HOST "cd /var/www/portfolio && npm install --production"
