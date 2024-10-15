@@ -6,57 +6,44 @@ on:
       - main
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
-
     steps:
-      # Étape 1 : Récupérer le code source
       - name: Checkout code
         uses: actions/checkout@v2
 
-      # Étape 2 : Configurer Node.js
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
           node-version: '16'
 
-      # Étape 3 : Installer les dépendances
       - name: Install dependencies
         run: npm install
 
-      # Étape 4 : Construire l'application React
-      - name: Build the React application
+      - name: Build the project
         run: npm run build
 
-      # Étape 5 : Créer un fichier tar à partir du répertoire de build
-      - name: Create tarball
-        run: tar -czvf portfolio.tar.gz -C build .
-
-      - name: Check if archive exists
-        run: ls -l portfolio.tar.gz
-
-      # Étape 6 : Se connecter à Docker Hub
-      - name: Log in to Docker Hub
-        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
-
-      # Étape 7 : Construire et pousser l'image Docker vers Docker Hub
-      - name: Build and push Docker image
+      - name: Check build directory
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/portfolio:latest .
-          docker push ${{ secrets.DOCKER_USERNAME }}/portfolio:latest
+          if [ -d build ]; then
+            echo "Build directory exists"
+            ls -lh build
+          else
+            echo "Build directory does not exist."
+            exit 1
+          fi
 
-  deploy:
-    runs-on: ubuntu-latest
-    needs: build
-
-    steps:
-      # Étape 1 : Déployer sur le VPS
-      - name: Deploy to VPS
+      - name: Deploy files to server
         uses: appleboy/scp-action@v0.1.3
         with:
-          host: ${{ secrets.VPS_IP }}
-          username: ${{ secrets.VPS_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: portfolio.tar.gz
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          source: build/*
           target: /var/www/portfolio/
           port: 22
+          timeout: 30s
+          command_timeout: 10m
+          use_insecure_cipher: false
+          rm: false
+          debug: true
