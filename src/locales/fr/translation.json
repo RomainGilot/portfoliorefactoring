@@ -60,5 +60,27 @@
         "link": "https://www.metz-numeric-school.fr/fr/formations/developpement-informatique/developpeur-full-stack-en-alternance"
       }
     ]
+  },
+  "projects": {
+    "title": "Mes projets",
+    "subtitle": "J'ai réalisé quelques projets, regardez les !",
+    "textButton": "En savoir plus",
+    "portfolio": {
+      "title": "Portfolio",
+      "message": "Ce projet est le site sur lequel vous vous trouvez actuellement ! Bonne visite :)"
+    },
+    "gdept": {
+      "title": "GDEPT",
+      "message": "Ce projet a été réalisé dans le cadre de mon alternance au SDIS57."
+    },
+    "access": {
+      "title": "Access",
+      "message": "Ce projet a été réalisé dans le cadre de mon bachelor Développeur Full-Stack."
+    }
+  },
+  "error": {
+    "title": "Oups, une erreur est survenue !",
+    "message": "Il semble que la page que vous recherchez n'existe pas...",
+    "button": "Retour à l'accueil"
   }
 }
